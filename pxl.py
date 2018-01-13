@@ -3,34 +3,34 @@ import math
 from PIL import Image
 from PIL import ImageColor
 
-import palletes
+import palettes
 
-# Usage: python pxl.py <square size> <color options> <file>
+# Usage: python pxl.py <square size> <color options> <method> <file>
 
 # Available Methods:
 # 0 - Limit each band to a certain number of values. (i.e. 5 red, 5 green, 5 blue possiblities)
-# 1 - Get a color from from an existing pallete based on euclidean distance between the actual color and the pallete colors.
-method = 0
+# 1 - Get a color from from an existing palette based on euclidean distance between the actual color and the palette colors.
 
 def main():
     pSize = int(sys.argv[1])
     colors = int(sys.argv[2])
-    f = sys.argv[3]
+    method = int(sys.argv[3])
+    f = sys.argv[4]
 
-    palleteRGB = map(ImageColor.getrgb, palletes.endsega)
+    paletteRGB = map(ImageColor.getrgb, palettes.endsega)
 
     if method == 0:
-        run(f, pSize, colors)
+        run(f, pSize, colors, method)
     elif method == 1:
-        run(f, pSize, palleteRGB)
+        run(f, pSize, paletteRGB, method)
 
-def run(file, pSize, colors):
+def run(file, pSize, colors, method):
     """ Run the filter for a file with a certain square size and number of possible colors """
     original = Image.open(file)
-    new = pixelate(original, pSize, colors)
+    new = pixelate(original, pSize, colors, method)
     new.show()
 
-def pixelate(original, pSize, colors):
+def pixelate(original, pSize, colors, method):
     """ Pixelates an image with a certain square size and number of possible colors"""
     newImage = Image.new("RGB", (original.size))
     oPixels = original.load()
@@ -63,7 +63,7 @@ def pixelate(original, pSize, colors):
             if method == 0:
                 color = getColorByRoundingBands((avgR, avgG, avgB), colors)
             elif method == 1:
-                color = getColorFromPallete((avgR, avgG, avgB), colors)
+                color = getColorFrompalette((avgR, avgG, avgB), colors)
 
             # Build this square in the new image.
             for pCol in range(bCol, bCol + pSize):
@@ -97,12 +97,12 @@ def getColorByRoundingBands(color, colorCount):
 
     return (r, g, b)
 
-def getColorFromPallete(color, pallete):
-    """ Generates a color by finding the most similar color from a specified color pallete """
+def getColorFrompalette(color, palette):
+    """ Generates a color by finding the most similar color from a specified color palette """
     def get_diffs(c):
         return (euclidean_difference(c, color), c)
 
-    diffs = map(get_diffs, pallete)
+    diffs = map(get_diffs, palette)
     return min(diffs, key = lambda t: t[0])[1]
 
 def euclidean_difference(c1, c2):
