@@ -30,3 +30,19 @@ python pxl.py <square size> <color options> <method> <file>
 | ------------- |:-------------|
 | 0 | Limit the number of possible band (R,G,B) values to a specific number. |
 | 1 | Get a color from from an existing palette based on euclidean distance between the actual color and the palette colors. |
+
+## Demo
+
+### Command
+
+```
+python pxl.py 8 8 0 ./images/roses.jpg
+```
+
+### Input
+
+![input image](images/roses.jpg)
+
+### Output
+
+![input image](images/roses-pxl.jpg)

@@ -78,7 +78,7 @@ def pixelate(original, pSize, colors, method):
     return newImage
 
 def getColorByRoundingBands(color, colorCount):
-    """ Generates a color based on the average color. This will limit the possible colors to `colorCount` """
+    """ Generates a color based on the average color. This will limit the possible colors per band to `colorCount` """
     def getClosest(val):
         size = 255 / colorCount
         cur = 255 - size
