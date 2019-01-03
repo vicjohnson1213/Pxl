@@ -1,112 +1,73 @@
-import sys
-import math
+import argparse
 from PIL import Image
-from PIL import ImageColor
 
-import palettes
+import methods
 
-# Usage: python pxl.py <square size> <color options> <method> <file>
+def pixelate(filepath, pixelSize, getColor):
+    original = Image.open(filepath)
 
-# Available Methods:
-# 0 - Limit each band to a certain number of values. (i.e. 5 red, 5 green, 5 blue possiblities)
-# 1 - Get a color from from an existing palette based on euclidean distance between the actual color and the palette colors.
-
-def main():
-    pSize = int(sys.argv[1])
-    colors = int(sys.argv[2])
-    method = int(sys.argv[3])
-    f = sys.argv[4]
-
-    paletteRGB = map(ImageColor.getrgb, palettes.endsega)
-
-    if method == 0:
-        run(f, pSize, colors, method)
-    elif method == 1:
-        run(f, pSize, paletteRGB, method)
-
-def run(file, pSize, colors, method):
-    """ Run the filter for a file with a certain square size and number of possible colors """
-    original = Image.open(file)
-    new = pixelate(original, pSize, colors, method)
-    new.show()
-
-def pixelate(original, pSize, colors, method):
-    """ Pixelates an image with a certain square size and number of possible colors"""
     newImage = Image.new("RGB", (original.size))
-    oPixels = original.load()
-    nPixels = newImage.load()
+    originalPixels = original.load()
+    newPixels = newImage.load()
 
-    bCol = 0
-    while bCol < original.size[0]:
-        bRow = 0
-        while bRow < original.size[1]:
-            rs = []
-            gs = []
-            bs = []
+    blockColumn = 0
+    while blockColumn < original.size[0]:
+        blockRow = 0
+        while blockRow < original.size[1]:
+            reds = []
+            greens = []
+            blues = []
 
             # Gets the colors of each pixel in this square
-            for pCol in range(bCol, bCol + pSize):
-                for pRow in range(bRow, bRow + pSize):
-                    if pCol >= original.size[0] or pRow >= original.size[1]:
+            for pixelColumn in range(blockColumn, blockColumn + pixelSize):
+                for pixelRow in range(blockRow, blockRow + pixelSize):
+                    if pixelColumn >= original.size[0] or pixelRow >= original.size[1]:
                         continue
 
-                    pix = oPixels[pCol, pRow]
-                    rs.append(pix[0])
-                    gs.append(pix[1])
-                    bs.append(pix[2])
+                    pix = originalPixels[pixelColumn, pixelRow]
+                    reds.append(pix[0])
+                    greens.append(pix[1])
+                    blues.append(pix[2])
 
             # Get the average color of this square
-            avgR = sum(rs)/len(rs)
-            avgG = sum(gs)/len(gs)
-            avgB = sum(bs)/len(bs)
+            avgR = sum(reds)/len(reds)
+            avgG = sum(greens)/len(greens)
+            avgB = sum(blues)/len(blues)
 
-            if method == 0:
-                color = getColorByRoundingBands((avgR, avgG, avgB), colors)
-            elif method == 1:
-                color = getColorFrompalette((avgR, avgG, avgB), colors)
+            filteredColor = getColor((avgR, avgG, avgB))
 
             # Build this square in the new image.
-            for pCol in range(bCol, bCol + pSize):
-                for pRow in range(bRow, bRow + pSize):
-                    if pCol >= original.size[0] or pRow >= original.size[1]:
+            for pixelColumn in range(blockColumn, blockColumn + pixelSize):
+                for pixelRow in range(blockRow, blockRow + pixelSize):
+                    if pixelColumn >= original.size[0] or pixelRow >= original.size[1]:
                         continue
-                    nPixels[pCol, pRow] = color
+                    newPixels[pixelColumn, pixelRow] = filteredColor
 
-            bRow += pSize
-        bCol += pSize
+            blockRow += pixelSize
+        blockColumn += pixelSize
 
-    return newImage
+    newImage.show()
 
-def getColorByRoundingBands(color, colorCount):
-    """ Generates a color based on the average color. This will limit the possible colors per band to `colorCount` """
-    def getClosest(val):
-        size = 255 / colorCount
-        cur = 255 - size
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input')
+    parser.add_argument('-s', '--size', type=int)
+    parser.add_argument('-o', '--output')
 
-        while cur >= 0:
-            if val > cur:
-                return cur
+    subparsers = parser.add_subparsers(dest='command')
 
-            cur -= size
+    bandsParser = subparsers.add_parser('bands')
+    bandsParser.add_argument('-c', '--count', type=int)
 
-        return 0
+    paletteParser = subparsers.add_parser('palette')
+    paletteParser.add_argument('-p', '--palette')
 
-    r = getClosest(color[0])
-    g = getClosest(color[1])
-    b = getClosest(color[2])
+    args = parser.parse_args()
 
-    return (r, g, b)
-
-def getColorFrompalette(color, palette):
-    """ Generates a color by finding the most similar color from a specified color palette """
-    def get_diffs(c):
-        return (euclidean_difference(c, color), c)
-
-    diffs = map(get_diffs, palette)
-    return min(diffs, key = lambda t: t[0])[1]
-
-def euclidean_difference(c1, c2):
-    return math.sqrt( ((c2[0] - c1[0]) ** 2) + ((c2[1] - c1[1]) ** 2) + ((c2[2] - c1[2]) ** 2) )
+    if args.command == 'bands':
+        pixelate(args.input, args.size, methods.bands.generateGetColor(args.count))
+    elif args.command == 'palette':
+        pixelate(args.input, args.size, methods.palette.generateGetColor(args.palette))
 
 if __name__ == '__main__':
     main()
