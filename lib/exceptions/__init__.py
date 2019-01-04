@@ -1,0 +1,1 @@
+from invalidPaletteException import InvalidPaletteException
