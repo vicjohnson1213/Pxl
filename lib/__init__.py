@@ -1,1 +1,1 @@
-import pixelate
+from pixelate import pixelate

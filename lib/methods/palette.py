@@ -1,7 +1,8 @@
 import math
 from PIL import ImageColor
+from ..exceptions import InvalidPaletteException
 
-from palettes import availablePalettes
+from palettes import palettes
 
 def generateGetColor(paletteName):
     def getColor(color):
@@ -13,11 +14,13 @@ def generateGetColor(paletteName):
         def get_diffs(c):
             return (euclidean_difference(c, color), c)
 
-        if paletteName in availablePalettes:
-            palette = availablePalettes[paletteName]
+        if paletteName in palettes:
+            palette = palettes[paletteName]
             paletteRGB = map(ImageColor.getrgb, palette.colors)
             diffs = map(get_diffs, paletteRGB)
             return min(diffs, key = lambda t: t[0])[1]
+        else:
+            raise InvalidPaletteException(paletteName)
 
         return (0, 0, 0)
 

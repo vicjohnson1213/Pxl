@@ -1,7 +1,7 @@
 import endsega
 import sweetie
 
-availablePalettes = {
+palettes = {
     'endsega': endsega,
     'sweetie': sweetie
 }
