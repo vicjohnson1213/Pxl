@@ -1,5 +1,5 @@
 import argparse
-from lib import pixelate
+from lib import pixelate as pxl
 from lib.exceptions import InvalidPaletteException
 from lib.methods.palettes import palettes
 
@@ -18,9 +18,9 @@ def main():
     paletteParser.add_argument('-p', '--palette')
 
     options = parser.parse_args()
-    
+
     try:
-        pixelate(options)
+        pxl.pixelate(options)
     except InvalidPaletteException as ex:
         print "Invalid palette: '{0}'".format(ex.palette)
         print ''
