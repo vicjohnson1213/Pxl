@@ -1,5 +1,6 @@
 from PIL import Image
 
+from exceptions import FileDoesNotExistException
 import methods
 
 def getAverageForBlock(columnStart, rowStart, pixelSize, size, originalPixels):
@@ -31,7 +32,10 @@ def pixelate(options):
     elif options.command == 'palette':
         getColor = methods.palette.generateGetColor(options.palette)
 
-    originalImage = Image.open(options.input)
+    try:
+        originalImage = Image.open(options.input)
+    except IOError as ex:
+        raise FileDoesNotExistException(options.input)
 
     newImage = Image.new("RGB", (originalImage.size))
     originalPixels = originalImage.load()

@@ -1,6 +1,8 @@
+import sys
 import argparse
+
+import lib.exceptions as exceptions
 from lib import pixelate as pxl
-from lib.exceptions import InvalidPaletteException
 from lib.methods.palettes import palettes
 
 def main():
@@ -21,13 +23,18 @@ def main():
 
     try:
         pxl.pixelate(options)
-    except InvalidPaletteException as ex:
+    except exceptions.InvalidPaletteException as ex:
         print "Invalid palette: '{0}'".format(ex.palette)
         print ''
         print 'Available palettes:'
 
         for palette in palettes:
             print '    {0}'.format(palette)
+        sys.exit(1)
+
+    except exceptions.FileDoesNotExistException as ex:
+        print "Invalid filepath: '{}'".format(ex.filepath)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
