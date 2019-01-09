@@ -1,17 +1,17 @@
 def generateGetColor(colorCount):
     def getColor(color):
         """ Generates a color based on the average color. This will limit the possible colors per band to `colorCount` """
+        span = 255.0 / colorCount
+        firstSeparator = span / 2
+
+        separators = map(lambda i: firstSeparator + (i * span), range(colorCount))
+
         def getClosest(val):
-            size = 255 / colorCount
-            cur = 255 - size
+            for (i, sep) in enumerate(separators):
+                if val < sep:
+                    return int(i * span)
 
-            while cur >= 0:
-                if val > cur:
-                    return cur
-
-                cur -= size
-
-            return 0
+            return 255
 
         r = getClosest(color[0])
         g = getClosest(color[1])
