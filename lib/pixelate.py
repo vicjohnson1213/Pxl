@@ -3,29 +3,6 @@ from PIL import Image
 from exceptions import FileDoesNotExistException
 import methods
 
-def getAverageForBlock(columnStart, rowStart, pixelSize, size, originalPixels):
-    reds = []
-    greens = []
-    blues = []
-
-    # Gets the colors of each pixel in this square
-    for pixelColumn in range(columnStart, columnStart + pixelSize):
-        for pixelRow in range(rowStart, rowStart + pixelSize):
-            if pixelColumn >= size[0] or pixelRow >= size[1]:
-                continue
-
-            pix = originalPixels[pixelColumn, pixelRow]
-            reds.append(pix[0])
-            greens.append(pix[1])
-            blues.append(pix[2])
-
-    avgR = sum(reds)/len(reds)
-    avgG = sum(greens)/len(greens)
-    avgB = sum(blues)/len(blues)
-
-    return (avgR, avgG, avgB)
-
-
 def pixelate(options):
     if options.command == 'bands':
         getColor = methods.bands.generateGetColor(options.count)
@@ -57,4 +34,26 @@ def pixelate(options):
             blockRow += options.size
         blockColumn += options.size
 
-    newImage.show()
+    newImage.save(options.output)
+
+def getAverageForBlock(columnStart, rowStart, pixelSize, size, originalPixels):
+    reds = []
+    greens = []
+    blues = []
+
+    # Gets the colors of each pixel in this square
+    for pixelColumn in range(columnStart, columnStart + pixelSize):
+        for pixelRow in range(rowStart, rowStart + pixelSize):
+            if pixelColumn >= size[0] or pixelRow >= size[1]:
+                continue
+
+            pix = originalPixels[pixelColumn, pixelRow]
+            reds.append(pix[0])
+            greens.append(pix[1])
+            blues.append(pix[2])
+
+    avgR = sum(reds)/len(reds)
+    avgG = sum(greens)/len(greens)
+    avgB = sum(blues)/len(blues)
+
+    return (avgR, avgG, avgB)
