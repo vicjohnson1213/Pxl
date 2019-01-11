@@ -1,13 +1,13 @@
 from PIL import Image
 
-from exceptions import FileDoesNotExistException
-import methods
+from . import exceptions
+from . import methods
 
 def pixelate(options):
-    if options.command == 'bands':
-        getColor = methods.bands.generateGetColor(options.count)
-    elif options.command == 'palette':
-        getColor = methods.palette.generateGetColor(options.palette)
+    if options.command == 'limitBands':
+        getColor = methods.generateLimitBands(options.count)
+    elif options.command == 'toPalette':
+        getColor = methods.generateToPalette(options.palette)
 
     try:
         originalImage = Image.open(options.input)

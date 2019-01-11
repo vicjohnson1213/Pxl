@@ -1,2 +1,0 @@
-from invalidPaletteException import InvalidPaletteException
-from fileDoesNotExistException import FileDoesNotExistException

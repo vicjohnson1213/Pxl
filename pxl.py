@@ -1,9 +1,9 @@
 import sys
 import argparse
 
-import lib.exceptions as exceptions
-from lib import pixelate as pxl
-from lib.methods.palettes import palettes
+from lib import exceptions
+from lib import pixelate
+from lib import palettes
 
 def main():
     parser = argparse.ArgumentParser()
@@ -13,28 +13,29 @@ def main():
 
     subparsers = parser.add_subparsers(dest='command')
 
-    bandsParser = subparsers.add_parser('bands')
+    bandsParser = subparsers.add_parser('limitBands')
     bandsParser.add_argument('-c', '--count', type=int)
 
-    paletteParser = subparsers.add_parser('palette')
+    paletteParser = subparsers.add_parser('toPalette')
     paletteParser.add_argument('-p', '--palette')
 
     options = parser.parse_args()
 
     try:
-        pxl.pixelate(options)
+        pixelate.pixelate(options)
     except exceptions.InvalidPaletteException as ex:
-        print "Invalid palette: '{0}'".format(ex.palette)
-        print ''
-        print 'Available palettes:'
+        print("Invalid palette: '{0}'".format(ex.palette))
+        print('')
+        print('Available palettes:')
 
-        for palette in palettes:
-            print '    {0}'.format(palette)
+        for palette in toPalette.palettes:
+            print('    {0}'.format(palette))
         sys.exit(1)
 
     except exceptions.FileDoesNotExistException as ex:
-        print "Invalid filepath: '{}'".format(ex.filepath)
+        print("Invalid filepath: '{}'".format(ex.filepath))
         sys.exit(1)
+
 
 if __name__ == '__main__':
     main()
