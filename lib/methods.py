@@ -25,7 +25,7 @@ def generateLimitBands(colorCount):
 
     return getColor
 
-def generateToPalette(paletteName):
+def generateToPalette(paletteName, mode):
     def getColor(color):
         """ Generates a color by finding the most similar color from a specified color palette. """
 
@@ -33,10 +33,18 @@ def generateToPalette(paletteName):
             return math.sqrt( ((c2[0] - c1[0]) ** 2) + ((c2[1] - c1[1]) ** 2) + ((c2[2] - c1[2]) ** 2) )
 
         def weightedEuclideanDifference(c1, c2):
-            return math.sqrt( (((c2[0] - c1[0]) * 0.3) ** 2) + (((c2[1] - c1[1])*0.59) ** 2) + (((c2[2] - c1[2])*0.11) ** 2) )
+            return math.sqrt( (((c2[0] - c1[0]) * 0.3) ** 2) + (((c2[1] - c1[1]) * 0.59) ** 2) + (((c2[2] - c1[2]) * 0.11) ** 2) )
+
+        def closestValue(c1, c2):
+            v1 = (c1[0] + c1[1] + c1[2]) / 3.0
+            v2 = (c2[0] + c2[1] + c2[2]) / 3.0
+            return abs(v2 - v1)
 
         def get_diffs(c):
-            return (weightedEuclideanDifference(c, color), c)
+            if mode == 'color':
+                return (weightedEuclideanDifference(c, color), c)
+            if mode == 'value':
+                return (closestValue(c, color), c)
 
         if paletteName in palettes.palettes:
             palette = palettes.palettes[paletteName]

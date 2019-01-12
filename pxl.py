@@ -2,7 +2,7 @@ import sys
 import argparse
 
 from lib import exceptions
-from lib import pixelate
+from lib import PXL
 from lib import palettes
 
 def main():
@@ -14,15 +14,16 @@ def main():
     subparsers = parser.add_subparsers(dest='command')
 
     bandsParser = subparsers.add_parser('limitBands')
-    bandsParser.add_argument('-c', '--count', type=int)
+    bandsParser.add_argument('count', type=int)
 
     paletteParser = subparsers.add_parser('toPalette')
-    paletteParser.add_argument('-p', '--palette')
+    paletteParser.add_argument('palette')
+    paletteParser.add_argument('-m', '--mode', default='color')
 
     options = parser.parse_args()
 
     try:
-        pixelate.pixelate(options)
+        PXL.pixelate(options)
     except exceptions.InvalidPaletteException as ex:
         print("Invalid palette: '{0}'".format(ex.palette))
         print('')

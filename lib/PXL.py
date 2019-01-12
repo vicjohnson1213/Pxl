@@ -7,7 +7,7 @@ def pixelate(options):
     if options.command == 'limitBands':
         getColor = methods.generateLimitBands(options.count)
     elif options.command == 'toPalette':
-        getColor = methods.generateToPalette(options.palette)
+        getColor = methods.generateToPalette(options.palette, options.mode)
 
     try:
         originalImage = Image.open(options.input)
