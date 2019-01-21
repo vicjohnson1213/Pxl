@@ -1,1 +1,2 @@
 Pillow==5.4.1
+git+git://github.com/vicjohnson1213/Bones.git#egg=bones
