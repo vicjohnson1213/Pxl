@@ -29,7 +29,7 @@ def main():
         print('')
         print('Available palettes:')
 
-        for palette in toPalette.palettes:
+        for palette in palettes.palettes:
             print('    {0}'.format(palette))
         sys.exit(1)
 

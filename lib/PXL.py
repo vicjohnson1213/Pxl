@@ -4,15 +4,15 @@ from . import exceptions
 from . import methods
 
 def pixelate(options):
-    if options.command == 'limitBands':
+    if options.method == 'limitBands':
         getColor = methods.generateLimitBands(options.count)
-    elif options.command == 'toPalette':
+    elif options.method == 'toPalette':
         getColor = methods.generateToPalette(options.palette, options.mode)
 
     try:
         originalImage = Image.open(options.input)
-    except IOError as ex:
-        raise FileDoesNotExistException(options.input)
+    except IOError:
+        raise exceptions.FileDoesNotExistException(options.input)
 
     newImage = Image.new("RGB", (originalImage.size))
     originalPixels = originalImage.load()

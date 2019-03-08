@@ -1,6 +1,9 @@
 import math
+
 from PIL import ImageColor
+
 from . import palettes
+from . import exceptions
 
 def generateLimitBands(colorCount):
     def getColor(color):
@@ -52,7 +55,7 @@ def generateToPalette(paletteName, mode):
             diffs = map(get_diffs, paletteRGB)
             return min(diffs, key = lambda t: t[0])[1]
         else:
-            raise InvalidPaletteException(paletteName)
+            raise exceptions.InvalidPaletteException(paletteName)
 
         return (0, 0, 0)
 
