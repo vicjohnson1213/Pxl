@@ -11,7 +11,7 @@ def main():
     parser.add_argument('output')
     parser.add_argument('size', type=int)
 
-    subparsers = parser.add_subparsers(dest='command')
+    subparsers = parser.add_subparsers(dest='method')
 
     bandsParser = subparsers.add_parser('limitBands')
     bandsParser.add_argument('count', type=int)
